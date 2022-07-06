@@ -1,6 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using JetBrains.Annotations;
+using UnityEngine;
+using UnityEngine.Windows;
 
 namespace PI.Math.GodelEncoding {
     public abstract class GodelEncoding<T> {
@@ -21,20 +26,34 @@ namespace PI.Math.GodelEncoding {
 
     public class IntGodelEncoding : GodelEncoding<int> {
         /// <summary>
-        /// Encodes <paramref name="_values"/> using 
+        /// Encodes <paramref name="values"/> using 
         /// </summary>
         /// <param name="alphabet">Alphabet to "use" ToDo: Make method without it, it's unnecessary</param>
-        /// <param name="_values">Values to encode using alphabet</param>
+        /// <param name="values">Values to encode using alphabet</param>
         /// <remarks>Godel Encoding: https://www.wikiwand.com/en/G%C3%B6del_numbering#/G%C3%B6del's_encoding</remarks>
         /// <returns></returns>
-        public static int EncodeInts(Enum alphabet, List<int> _values) {
+        public static int EncodeInts(Enum alphabet, List<int> values) {
             IntGodelEncoding encoder = new IntGodelEncoding();
-            return encoder.Encode(alphabet, _values);
+            return encoder.Encode(alphabet, values);
         }
 
-        public static int EncodeInts(Enum alphabet, List<int> _values, out string _log) {
+        public static int EncodeInts(Enum alphabet, List<int> values, out string log) {
             IntGodelEncoding encoder = new IntGodelEncoding();
-            return encoder.Encode(alphabet, _values, out _log);
+            return encoder.Encode(alphabet, values, out log);
+        }
+
+        public static List<int> DecodeInt(int n, out string log) {
+            log = default;
+
+            var factors = PureMethods.GetPrimeFactorsOf(n, out string factorsLog);
+            
+            // Inverse(?) Sieve, optimize later
+            for (int i = 0; i < factors.Count; i++) {
+                
+            }
+            
+            
+            return PureMethods.GetPrimeFactorsOf(n, out log);
         }
 
         public override int Encode(Enum alphabet, List<int> values) {
@@ -42,17 +61,16 @@ namespace PI.Math.GodelEncoding {
             int count = values.Count;
 
             for (int i = 0; i < count; i++) {
-                var @base = Misc.GetNthPrime(i);
+                var @base = PureMethods.GetNthPrime(i);
                 var exponent = values[i];
                 returnValue *= System.Math.Pow(@base, exponent);
             }
             return (int)returnValue;
         }
 
+        
+        
         public int Encode(Enum alphabet, List<int> values, out string log) {
-
-            log = "Encoded: ";
-
             double returnValue = 1;
 
             int count = values.Count;
@@ -60,449 +78,131 @@ namespace PI.Math.GodelEncoding {
             string expansion = "";
 
             for (int i = 0; i < count; i++) {
-                var @base = Misc.GetNthPrime(i);
+                var @base = PureMethods.GetNthPrime(i);
                 expansion += $"( [{@base}]^";
 
                 var exponent = values[i];
                 expansion += $"[{exponent}] )";
                 returnValue *= System.Math.Pow(@base, exponent);
             }
+            log = expansion;
             //log += "\n";
-            log += expansion + " = " + returnValue;
+            //log += expansion + " = " + returnValue;
             return (int)returnValue;
         }
     }
 
     // ToDo: Move to new namespace
     // ToDo: Wrap int so it can be replaced later.
-    public static class Misc {
-        //ToDo: Put this in file
+    public static class PureMethods {
+        /// <summary>
+        /// Creates a string of the form "1,2,3,4."
+        /// <para>Example (List of int):  {1,2,3,4} => "1,2,3,4."</para>>
+        /// </summary>
+        /// <param name="delimiter">Delimiting string. ", " by default.</param>
+        /// <param name="end">Ending string. "." by default.</param>
+        /// <returns></returns>
+        public static string ToCommaDelimitedString<T>(this IEnumerable<T> enumerable, string delimiter = ", ", string end = ".") {
+            var list = enumerable.ToList();
+            string returnString = "";
+
+            for (int i = 0; i < list.Count; i++) {
+                returnString += list[i];
+                returnString += i + 1 < list.Count ? delimiter : end;
+            }
+
+            return returnString;
+        }
+
+        public static List<int> GetPrimeFactorsOf(int n, out string logString) {
+            var primeFactors = GetPrimesLessThan(n);
+
+
+            // Remove any primes that don't evenly divide n
+            for (int i = primeFactors.Count - 1; i >= 0; i--) {
+                if (n % primeFactors[i] != 0) {
+                    //Debug.Log($"{nameof(GodelEncodeTesting)}.{nameof(GetPrimeFactorsOf)}() - {primeFactors[i]}%{n} != 0, removing");
+                    primeFactors.RemoveAt(i);
+                }
+            }
+
+            logString = primeFactors.ToCommaDelimitedString();
+
+            return primeFactors;
+        }
+        
         /// List of Primes
-        private static List<int> _primes = new List<int>
+        public static List<int> Primes
         {
-            2,
-            3,
-            5,
-            7,
-            11,
-            13,
-            17,
-            19,
-            23,
-            29,
-            31,
-            37,
-            41,
-            43,
-            47,
-            53,
-            59,
-            61,
-            67,
-            71,
-            73,
-            79,
-            83,
-            89,
-            97,
-            101,
-            103,
-            107,
-            109,
-            113,
-            127,
-            131,
-            137,
-            139,
-            149,
-            151,
-            157,
-            163,
-            167,
-            173,
-            179,
-            181,
-            191,
-            193,
-            197,
-            199,
-            211,
-            223,
-            227,
-            229,
-            233,
-            239,
-            241,
-            251,
-            257,
-            263,
-            269,
-            271,
-            277,
-            281,
-            283,
-            293,
-            307,
-            311,
-            313,
-            317,
-            331,
-            337,
-            347,
-            349,
-            353,
-            359,
-            367,
-            373,
-            379,
-            383,
-            389,
-            397,
-            401,
-            409,
-            419,
-            421,
-            431,
-            433,
-            439,
-            443,
-            449,
-            457,
-            461,
-            463,
-            467,
-            479,
-            487,
-            491,
-            499,
-            503,
-            509,
-            521,
-            523,
-            541,
-            547,
-            557,
-            563,
-            569,
-            571,
-            577,
-            587,
-            593,
-            599,
-            601,
-            607,
-            613,
-            617,
-            619,
-            631,
-            641,
-            643,
-            647,
-            653,
-            659,
-            661,
-            673,
-            677,
-            683,
-            691,
-            701,
-            709,
-            719,
-            727,
-            733,
-            739,
-            743,
-            751,
-            757,
-            761,
-            769,
-            773,
-            787,
-            797,
-            809,
-            811,
-            821,
-            823,
-            827,
-            829,
-            839,
-            853,
-            857,
-            859,
-            863,
-            877,
-            881,
-            883,
-            887,
-            907,
-            911,
-            919,
-            929,
-            937,
-            941,
-            947,
-            953,
-            967,
-            971,
-            977,
-            983,
-            991,
-            997,
-            1009,
-            1013,
-            1019,
-            1021,
-            1031,
-            1033,
-            1039,
-            1049,
-            1051,
-            1061,
-            1063,
-            1069,
-            1087,
-            1091,
-            1093,
-            1097,
-            1103,
-            1109,
-            1117,
-            1123,
-            1129,
-            1151,
-            1153,
-            1163,
-            1171,
-            1181,
-            1187,
-            1193,
-            1201,
-            1213,
-            1217,
-            1223,
-            1229,
-            1231,
-            1237,
-            1249,
-            1259,
-            1277,
-            1279,
-            1283,
-            1289,
-            1291,
-            1297,
-            1301,
-            1303,
-            1307,
-            1319,
-            1321,
-            1327,
-            1361,
-            1367,
-            1373,
-            1381,
-            1399,
-            1409,
-            1423,
-            1427,
-            1429,
-            1433,
-            1439,
-            1447,
-            1451,
-            1453,
-            1459,
-            1471,
-            1481,
-            1483,
-            1487,
-            1489,
-            1493,
-            1499,
-            1511,
-            1523,
-            1531,
-            1543,
-            1549,
-            1553,
-            1559,
-            1567,
-            1571,
-            1579,
-            1583,
-            1597,
-            1601,
-            1607,
-            1609,
-            1613,
-            1619,
-            1621,
-            1627,
-            1637,
-            1657,
-            1663,
-            1667,
-            1669,
-            1693,
-            1697,
-            1699,
-            1709,
-            1721,
-            1723,
-            1733,
-            1741,
-            1747,
-            1753,
-            1759,
-            1777,
-            1783,
-            1787,
-            1789,
-            1801,
-            1811,
-            1823,
-            1831,
-            1847,
-            1861,
-            1867,
-            1871,
-            1873,
-            1877,
-            1879,
-            1889,
-            1901,
-            1907,
-            1913,
-            1931,
-            1933,
-            1949,
-            1951,
-            1973,
-            1979,
-            1987,
-            1993,
-            1997,
-            1999,
-            2003,
-            2011,
-            2017,
-            2027,
-            2029,
-            2039,
-            2053,
-            2063,
-            2069,
-            2081,
-            2083,
-            2087,
-            2089,
-            2099,
-            2111,
-            2113,
-            2129,
-            2131,
-            2137,
-            2141,
-            2143,
-            2153,
-            2161,
-            2179,
-            2203,
-            2207,
-            2213,
-            2221,
-            2237,
-            2239,
-            2243,
-            2251,
-            2267,
-            2269,
-            2273,
-            2281,
-            2287,
-            2293,
-            2297,
-            2309,
-            2311,
-            2333,
-            2339,
-            2341,
-            2347,
-            2351,
-            2357,
-            2371,
-            2377,
-            2381,
-            2383,
-            2389,
-            2393,
-            2399,
-            2411,
-            2417,
-            2423,
-            2437,
-            2441,
-            2447,
-            2459,
-            2467,
-            2473,
-            2477,
-            2503,
-            2521,
-            2531,
-            2539,
-            2543,
-            2549,
-            2551,
-            2557,
-            2579,
-            2591,
-            2593,
-            2609,
-            2617,
-            2621,
-            2633,
-            2647,
-            2657,
-            2659,
-            2663,
-            2671,
-            2677,
-            2683,
-            2687,
-            2689,
-            2693,
-            2699,
-            2707,
-            2711,
-            2713,
-            2719,
-            2729,
-            2731,
-            2741,
-            2749,
-            2753,
-            2767,
-            2777,
-            2789,
-            2791,
-            2797,
-            2801,
-            2803,
-            2819,
-            2833,
-            2837,
-            2843,
-            2851,
-            2857,
-            2861,
-            2879,
-            2887,
-            2897,
-            2903
-        };
+            get
+            {
+
+                if (_primes == null) {
+                    var primeFile = Resources.Load<TextAsset>("Primes");
+                    Debug.Assert(primeFile != null);
+                    string[] primeStrings = Regex.Split(primeFile.text, ",");
+
+                    _primes = new List<int>();
+
+                    foreach (string primeString in primeStrings) {
+                        if (int.TryParse(primeString, out int primeNumber)) {
+                            _primes.Add(primeNumber);
+                        }
+                        else {
+                            Debug.Log($"{nameof(PureMethods)}.{nameof(Primes)}() - Failed to parse {primeString}!");
+                        }
+                    }
+                }
+                return _primes;
+            }
+        }
+        private static List<int> _primes;
 
         /// Returns the Nth prime
-        public static int GetNthPrime(int n) => _primes[n];
+        public static int GetNthPrime(int n) {
+            return Primes[n];
+        }
+
+        /// <summary>
+        /// Get a list of all prime integers less than n.
+        /// </summary>
+        /// <remarks>Uses Sieve of Eratosthenes</remarks>
+        public static List<int> GetPrimesLessThan(int n) {
+            var returnValue = new List<int>();
+
+            var s = SieveOfEratosthenes(n);
+
+            while (s.MoveNext()) {
+                returnValue.Add((int)s.Current!);
+            }
+
+            return returnValue;
+
+            // https://codereview.stackexchange.com/questions/82863/sieve-of-eratosthenes-in-c
+            IEnumerator SieveOfEratosthenes(int upperLimit) {
+                //BitArray works just like a bool[] but takes up a lot less space.
+                BitArray composite = new BitArray(upperLimit);
+
+                //Only need to cross off numbers up to sqrt.
+                int sqrt = (int)Mathf.Sqrt(upperLimit);
+
+                for (int p = 2; p <= sqrt; ++p) {
+                    if (composite[p]) continue; //The number is crossed off; skip it
+
+                    yield return p; //Not crossed off means it's prime. Return it.
+
+                    //Cross off each multiple of this prime
+                    //Start at the prime squared, because lower numbers will
+                    //have been crossed off already. No need to check them.
+                    for (int i = p * p; i < upperLimit; i += p)
+                        composite[i] = true;
+                }
+
+                //The remaining numbers not crossed off are also prime.
+                for (int p = sqrt + 1; p < upperLimit; ++p) {
+                    if (!composite[p]) yield return p;
+                }
+            }
+        }
     }
 }
