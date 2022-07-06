@@ -55,9 +55,8 @@ public static class PureMethods {
 
         return returnString;
     }
-
-    //
-    public static List<int> GetPrimeFactorsOf(int n, Action<string> logAction) {
+    
+    public static List<int> GetPrimeFactorsOf(int n, Action<string> visitorAction = null) {
         var primeFactors = PrimeCountingFunctionInt(n);
 
 
@@ -68,7 +67,7 @@ public static class PureMethods {
             }
         }
 
-        logAction.Invoke(primeFactors.ToCommaDelimitedString());
+        visitorAction?.Invoke(primeFactors.ToCommaDelimitedString());
 
         return primeFactors;
     }

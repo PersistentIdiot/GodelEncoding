@@ -22,25 +22,25 @@ namespace PI.Math.GodelEncoding {
             return DecodeInt(n, s => { });
         }
         
-        public static int EncodeValues(List<int> values, Action<string> logAction) {
-            logAction.Invoke("");
+        public static int EncodeValues(List<int> values, Action<string> visitorAction = null) {
+            visitorAction?.Invoke(nameof(EncodeValues));
             double returnValue = 1;
             int count = values.Count;
 
 
             for (int i = 0; i < count; i++) {
                 var @base = PureMethods.GetNthPrime(i);
-                logAction.Invoke($"( [{@base}]^");
+                visitorAction?.Invoke($"( [{@base}]^");
 
                 var exponent = values[i];
-                logAction.Invoke($"[{exponent}] )");
+                visitorAction?.Invoke($"[{exponent}] )");
                 returnValue *= System.Math.Pow(@base, exponent);
             }
             return (int)returnValue;
         }
         
-        public static List<int> DecodeInt(int n, Action<string> logAction) {
-            logAction.Invoke("Logging not implemented yet.");
+        public static List<int> DecodeInt(int n, Action<string> visitorAction = null) {
+            visitorAction?.Invoke("Logging not implemented yet.");
             var factors = PureMethods.GetPrimeFactorsOf(n, s => { });
 
             // Inverse Sieve(?), optimize later
@@ -56,7 +56,6 @@ namespace PI.Math.GodelEncoding {
             }
             return values;
         }
-        
     }
 
     
