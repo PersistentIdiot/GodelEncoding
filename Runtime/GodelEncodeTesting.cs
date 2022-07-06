@@ -26,7 +26,7 @@ namespace GodelEncoding.Runtime {
         [Button]
         private void TestEncodeInts() {
             string logString = "LogString";
-            IntGodelEncoding encoder = new IntGodelEncoding();
+            IntGodelEncoder encoder = new IntGodelEncoder();
             encoder.Encode(_values, s => logString += s);
             //IntGodelEncoding.EncodeValues(_values, out string logString);
             Debug.Log(logString);
@@ -48,7 +48,7 @@ namespace GodelEncoding.Runtime {
 
         [Button]
         private void TestEncodeDecode() {
-            IntGodelEncoding encoder = new IntGodelEncoding();
+            IntGodelEncoder encoder = new IntGodelEncoder();
             // Encoding
             string logString = $"GodelEncoding({_values.ToCommaDelimitedString().Replace(".", "")}) ";
 
@@ -62,8 +62,8 @@ namespace GodelEncoding.Runtime {
             // Decoding
             string decodedValuesLog = "";
             logString += $"GodelDecoding({encodedInt})";
-        
-        
+
+
             var decodedValues = encoder.Decode(encodedInt, s => decodedValuesLog += s);
             logString += $" = ({decodedValues.ToCommaDelimitedString().Replace(".", "")}) ";
             logString += $" => ";
@@ -87,11 +87,31 @@ namespace GodelEncoding.Runtime {
             Func<string, string, string> stringExponentiation = (s1, s2) => $"{s1}^{s2}";
             Func<string, string, string> stringMultiplication = (s1, s2) => stringExponentiation.Invoke($"( [{s1}]", $"[{s2}] ) ");
 
-            var output = GodelOperations.GodelOperator<string>(decodedValues, PureMethods.GetPrimeFactorsOf(encodedInt, s => { }), stringExponentiation,
-                stringMultiplication);
+            var output = GodelOperations.GodelOperator<string>(decodedValues, PureMethods.GetPrimeFactorsOf(encodedInt, s => { }),
+                stringExponentiation, stringMultiplication);
             logString += $"GenericGodelOperator: {output}";
 
             Debug.Log(logString);
+        }
+
+        [Button]
+        private void TestDecodeGodelEncodedInt() {
+            GodelEncodedInt godelEncodedInt = new GodelEncodedInt(_values);
+            var decodedValues = godelEncodedInt.DecodeGodelEncodedInt();
+
+            bool different = _values.Count != decodedValues.Count;
+
+            for (int i = 0; i < _values.Count; i++) {
+                different &= _values[i] == decodedValues[i];
+            }
+
+            Debug.Log($"Different: {different}, _values: {_values.ToCommaDelimitedString()}, decodedValues: {decodedValues.ToCommaDelimitedString()}");
+            
+        }
+
+        [Button]
+        private void TestDecodeGodelEncodedIntTwo() {
+            GodelEncodedInt godelEncodedInt = new GodelEncodedInt(_values);
         }
     }
 }
