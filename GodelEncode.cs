@@ -41,7 +41,7 @@ namespace PI.Math.GodelEncoding {
         
         public static List<int> DecodeInt(int n, Action<string> logAction) {
             logAction.Invoke("Logging not implemented yet.");
-            var factors = PureMethods.GetPrimeFactorsOf(n, out _);
+            var factors = PureMethods.GetPrimeFactorsOf(n, s => { });
 
             // Inverse Sieve(?), optimize later
             var values = new List<int>();

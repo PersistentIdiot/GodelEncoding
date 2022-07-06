@@ -1,6 +1,7 @@
 ﻿// ToDo: Move to new namespace
 // ToDo: Wrap int so it can be replaced later.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,43 +9,8 @@ using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static class PureMethods {
-    /// <summary>
-    /// Creates a string of the form "1,2,3,4."
-    /// <para>Example (List of int):  {1,2,3,4} => "1,2,3,4."</para>>
-    /// </summary>
-    /// <param name="delimiter">Delimiting string. ", " by default.</param>
-    /// <param name="end">Ending string. "." by default.</param>
-    /// <returns></returns>
-    public static string ToCommaDelimitedString<T>(this IEnumerable<T> enumerable, string delimiter = ", ", string end = ".") {
-        var list = enumerable.ToList();
-        string returnString = "";
-
-        for (int i = 0; i < list.Count; i++) {
-            returnString += list[i];
-            returnString += i + 1 < list.Count ? delimiter : end;
-        }
-
-        return returnString;
-    }
-
-    //
-    public static List<int> GetPrimeFactorsOf(int n, out string logString) {
-        var primeFactors = PrimeCountingFunctionInt(n);
-
-
-        // Remove any primes that don't evenly divide n
-        for (int i = primeFactors.Count - 1; i >= 0; i--) {
-            if (n % primeFactors[i] != 0) {
-                primeFactors.RemoveAt(i);
-            }
-        }
-
-        logString = primeFactors.ToCommaDelimitedString();
-
-        return primeFactors;
-    }
-
-    /// List of Primes
+    
+    /// List of Primes ToDo: Move to repository of some kind
     public static List<int> Primes
     {
         get
@@ -70,6 +36,44 @@ public static class PureMethods {
         }
     }
     private static List<int> _primes;
+    
+    /// <summary>
+    /// Creates a string of the form "1,2,3,4."
+    /// <para>Example (List of int):  {1,2,3,4} => "1,2,3,4."</para>>
+    /// </summary>
+    /// <param name="delimiter">Delimiting string. ", " by default.</param>
+    /// <param name="end">Ending string. "." by default.</param>
+    /// <returns></returns>
+    public static string ToCommaDelimitedString<T>(this IEnumerable<T> enumerable, string delimiter = ", ", string end = ".") {
+        var list = enumerable.ToList();
+        string returnString = "";
+
+        for (int i = 0; i < list.Count; i++) {
+            returnString += list[i];
+            returnString += i + 1 < list.Count ? delimiter : end;
+        }
+
+        return returnString;
+    }
+
+    //
+    public static List<int> GetPrimeFactorsOf(int n, Action<string> logAction) {
+        var primeFactors = PrimeCountingFunctionInt(n);
+
+
+        // Remove any primes that don't evenly divide n
+        for (int i = primeFactors.Count - 1; i >= 0; i--) {
+            if (n % primeFactors[i] != 0) {
+                primeFactors.RemoveAt(i);
+            }
+        }
+
+        logAction.Invoke(primeFactors.ToCommaDelimitedString());
+
+        return primeFactors;
+    }
+
+    
 
     /// Returns the Nth prime
     public static int GetNthPrime(int n) {
