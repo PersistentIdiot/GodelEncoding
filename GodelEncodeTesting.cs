@@ -55,13 +55,13 @@ public class GodelEncodeTesting : MonoBehaviour {
 
     [Button]
     private void TestEncodeInts() {
-        IntGodelEncoding.EncodeInts(_alphabet, _values, out string logString);
+        IntGodelEncoding.EncodeValues(_alphabet, _values, out string logString);
         Debug.Log(logString);
     }
 
     [Button]
     private void TestGetPrimesLessThan() {
-        var factorization = PureMethods.GetPrimesLessThan(_primeFactorizationTest);
+        var factorization = PureMethods.PrimeCountingFunctionInt(_primeFactorizationTest);
         var logString = $"Primes less than {_primeFactorizationTest}: {factorization.ToCommaDelimitedString()}";
         Debug.Log(logString);
     }
@@ -76,21 +76,35 @@ public class GodelEncodeTesting : MonoBehaviour {
     private void TestEncodeDecode() {
         // Encoding
         string logString = $"Encoding({_values.ToCommaDelimitedString().Replace(".", "")}) ";
-        var encodedValue = IntGodelEncoding.EncodeInts(_alphabet, _values, out string encodedValuesLog);
-        logString += " = ";
-        logString += encodedValue;
-        logString += " => ";
-        logString += encodedValuesLog;
-        logString += "= " + encodedValue;
 
+        var encodedInt = IntGodelEncoding.EncodeValues(_alphabet, _values, out string encodedValuesLog);
+        logString += $" = {encodedInt} => {encodedValuesLog} = {encodedInt}";
+
+        // Line Break
         logString += "\n";
 
-        // Decoding - Expected: {1,2,3}
-        logString += $"Decoding({encodedValue})";
-        logString += $" = ";
-        var decodedValue = IntGodelEncoding.DecodeInt(encodedValue, out string decodedValuesLog);
-        logString += $"({decodedValue.ToCommaDelimitedString().Replace(".", "")})";
-        logString += $" => {decodedValuesLog}";
+        // Decoding
+        logString += $"Decoding({encodedInt})";
+        var decodedValues = IntGodelEncoding.DecodeInt(encodedInt, out string decodedValuesLog);
+        logString += $" = ({decodedValues.ToCommaDelimitedString().Replace(".", "")}) ";
+        logString += $" => ";
+        
+        
+        
+        string x = "g"; 
+        logString += $"({PureMethods.GetPrimeFactorsOf(encodedInt, out string _).ToCommaDelimitedString().Replace(".","")})";
+        logString += $" {nameof(x)} ";
+        logString += $"({decodedValues.ToCommaDelimitedString().Replace(".", "")}) ";
+        
+
+        /*
+        logString += $"\n";
+        var godelOperatorOutput = GodelOperations.GodelOperatorString(decodedValues,PureMethods.GetPrimeFactorsOf(encodedInt, out string _));
+        logString += $"GodelOperatorString: {godelOperatorOutput}";
+        */
+        
+        logString += $"\n";
+        logString += $"GodelOperator: {GodelOperations.GodelOperator(decodedValues,PureMethods.GetPrimeFactorsOf(encodedInt, out string _))}";
 
         Debug.Log(logString);
     }

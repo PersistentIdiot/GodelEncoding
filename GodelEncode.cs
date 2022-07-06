@@ -32,34 +32,34 @@ namespace PI.Math.GodelEncoding {
         /// <param name="values">Values to encode using alphabet</param>
         /// <remarks>Godel Encoding: https://www.wikiwand.com/en/G%C3%B6del_numbering#/G%C3%B6del's_encoding</remarks>
         /// <returns></returns>
-        public static int EncodeInts(Enum alphabet, List<int> values) {
+        public static int EncodeValues(Enum alphabet, List<int> values) {
             IntGodelEncoding encoder = new IntGodelEncoding();
             return encoder.Encode(alphabet, values);
         }
 
-        public static int EncodeInts(Enum alphabet, List<int> values, out string log) {
+        public static int EncodeValues(Enum alphabet, List<int> values, out string log) {
             IntGodelEncoding encoder = new IntGodelEncoding();
             return encoder.Encode(alphabet, values, out log);
         }
 
         public static List<int> DecodeInt(int n, out string log) {
-            log = "Let as an exercise to the reader";
-
+            log = "No log";
             var factors = PureMethods.GetPrimeFactorsOf(n, out string factorsLog);
 
             // Inverse(?) Sieve, optimize later
-            int encodedN = n;
-            var returnValues = new List<int>();
+            var values = new List<int>();
+
             for (int i = 0; i < factors.Count; i++) {
                 int count = 0;
-                while (encodedN % factors[i] == 0) {
-                    encodedN /= factors[i];
+
+                while (n % factors[i] == 0) {
+                    n /= factors[i];
                     count++;
                 }
-                Debug.Assert(count >0);
-                returnValues.Add(count);
+                Debug.Assert(count > 0);
+                values.Add(count);
             }
-            return returnValues;
+            return values;
         }
 
         public override int Encode(Enum alphabet, List<int> values) {
@@ -74,7 +74,7 @@ namespace PI.Math.GodelEncoding {
             return (int)returnValue;
         }
 
-        public int Encode(Enum alphabet, List<int> values, out string log) {
+        private int Encode(Enum alphabet, List<int> values, out string log) {
             double returnValue = 1;
 
             int count = values.Count;
@@ -94,6 +94,8 @@ namespace PI.Math.GodelEncoding {
             //log += expansion + " = " + returnValue;
             return (int)returnValue;
         }
+
+        
     }
 
     // ToDo: Move to new namespace
@@ -119,7 +121,7 @@ namespace PI.Math.GodelEncoding {
         }
 
         public static List<int> GetPrimeFactorsOf(int n, out string logString) {
-            var primeFactors = GetPrimesLessThan(n);
+            var primeFactors = PrimeCountingFunctionInt(n);
 
 
             // Remove any primes that don't evenly divide n
@@ -168,10 +170,10 @@ namespace PI.Math.GodelEncoding {
         }
 
         /// <summary>
-        /// Get a list of all prime integers less than n.
+        /// Get a list of all prime integers less than n.https://www.wikiwand.com/en/Prime-counting_function
         /// </summary>
-        /// <remarks>Uses Sieve of Eratosthenes</remarks>
-        public static List<int> GetPrimesLessThan(int n) {
+        /// <remarks>Implemented using Sieve of Eratosthenes</remarks>
+        public static List<int> PrimeCountingFunctionInt(int n) {
             var returnValue = new List<int>();
 
             var s = SieveOfEratosthenes(n);
