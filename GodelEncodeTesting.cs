@@ -75,7 +75,7 @@ public class GodelEncodeTesting : MonoBehaviour {
     [Button]
     private void TestEncodeDecode() {
         // Encoding
-        string logString = $"Encoding({_values.ToCommaDelimitedString().Replace(".", "")}) ";
+        string logString = $"GodelEncoding({_values.ToCommaDelimitedString().Replace(".", "")}) ";
 
         var encodedInt = IntGodelEncoding.EncodeValues(_alphabet, _values, out string encodedValuesLog);
         logString += $" = {encodedInt} => {encodedValuesLog} = {encodedInt}";
@@ -84,27 +84,33 @@ public class GodelEncodeTesting : MonoBehaviour {
         logString += "\n";
 
         // Decoding
-        logString += $"Decoding({encodedInt})";
+        logString += $"GodelDecoding({encodedInt})";
         var decodedValues = IntGodelEncoding.DecodeInt(encodedInt, out string decodedValuesLog);
         logString += $" = ({decodedValues.ToCommaDelimitedString().Replace(".", "")}) ";
         logString += $" => ";
+
         
-        
-        
-        string x = "g"; 
-        logString += $"({PureMethods.GetPrimeFactorsOf(encodedInt, out string _).ToCommaDelimitedString().Replace(".","")})";
+        // Operator
+        string x = "g";
+        logString += $"({PureMethods.GetPrimeFactorsOf(encodedInt, out string _).ToCommaDelimitedString().Replace(".", "")})";
         logString += $" {nameof(x)} ";
         logString += $"({decodedValues.ToCommaDelimitedString().Replace(".", "")}) ";
-        
 
-        /*
+
+
         logString += $"\n";
-        var godelOperatorOutput = GodelOperations.GodelOperatorString(decodedValues,PureMethods.GetPrimeFactorsOf(encodedInt, out string _));
+        var godelOperatorOutput = GodelOperations.GodelOperatorString(decodedValues, PureMethods.GetPrimeFactorsOf(encodedInt, out string _));
         logString += $"GodelOperatorString: {godelOperatorOutput}";
-        */
-        
+
+
         logString += $"\n";
-        logString += $"GodelOperator: {GodelOperations.GodelOperator(decodedValues,PureMethods.GetPrimeFactorsOf(encodedInt, out string _))}";
+
+        Func<string, string, string> stringExponentiation = (s1, s2) => $"{s1}^{s2}";
+        Func<string, string, string> stringMultiplication = (s1, s2) => stringExponentiation.Invoke($"( [{s1}]", $"[{s2}] ) ");
+
+        var output = GodelOperations.GodelOperator<string>(decodedValues, PureMethods.GetPrimeFactorsOf(encodedInt, out string _),
+            stringExponentiation, stringMultiplication);
+        logString += $"GenericGodelOperator: {output}";
 
         Debug.Log(logString);
     }
