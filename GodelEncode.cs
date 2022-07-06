@@ -43,17 +43,23 @@ namespace PI.Math.GodelEncoding {
         }
 
         public static List<int> DecodeInt(int n, out string log) {
-            log = default;
+            log = "Let as an exercise to the reader";
 
             var factors = PureMethods.GetPrimeFactorsOf(n, out string factorsLog);
-            
+
             // Inverse(?) Sieve, optimize later
+            int encodedN = n;
+            var returnValues = new List<int>();
             for (int i = 0; i < factors.Count; i++) {
-                
+                int count = 0;
+                while (encodedN % factors[i] == 0) {
+                    encodedN /= factors[i];
+                    count++;
+                }
+                Debug.Assert(count >0);
+                returnValues.Add(count);
             }
-            
-            
-            return PureMethods.GetPrimeFactorsOf(n, out log);
+            return returnValues;
         }
 
         public override int Encode(Enum alphabet, List<int> values) {
@@ -68,8 +74,6 @@ namespace PI.Math.GodelEncoding {
             return (int)returnValue;
         }
 
-        
-        
         public int Encode(Enum alphabet, List<int> values, out string log) {
             double returnValue = 1;
 
@@ -130,7 +134,7 @@ namespace PI.Math.GodelEncoding {
 
             return primeFactors;
         }
-        
+
         /// List of Primes
         public static List<int> Primes
         {

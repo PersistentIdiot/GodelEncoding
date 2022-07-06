@@ -87,8 +87,10 @@ public class GodelEncodeTesting : MonoBehaviour {
 
         // Decoding - Expected: {1,2,3}
         logString += $"Decoding({encodedValue})";
-        logString += $" =?= ";
-        logString += IntGodelEncoding.DecodeInt(encodedValue, out string decodedValuesLog).ToCommaDelimitedString();
+        logString += $" = ";
+        var decodedValue = IntGodelEncoding.DecodeInt(encodedValue, out string decodedValuesLog);
+        logString += $"({decodedValue.ToCommaDelimitedString().Replace(".", "")})";
+        logString += $" => {decodedValuesLog}";
 
         Debug.Log(logString);
     }
