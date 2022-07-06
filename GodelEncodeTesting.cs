@@ -25,7 +25,8 @@ public class GodelEncodeTesting : MonoBehaviour {
     [Button]
     private void TestEncodeInts() {
         string logString = "LogString";
-        IntGodelEncoding.EncodeValues(_values, s => logString += s);
+        IntGodelEncoding encoder = new IntGodelEncoding();
+        encoder.Encode(_values, s => logString += s);
         //IntGodelEncoding.EncodeValues(_values, out string logString);
         Debug.Log(logString);
     }
@@ -46,11 +47,12 @@ public class GodelEncodeTesting : MonoBehaviour {
 
     [Button]
     private void TestEncodeDecode() {
+        IntGodelEncoding encoder = new IntGodelEncoding();
         // Encoding
         string logString = $"GodelEncoding({_values.ToCommaDelimitedString().Replace(".", "")}) ";
 
         string encodedValuesLog = "";
-        var encodedInt = IntGodelEncoding.EncodeValues(_values, s => encodedValuesLog += s);
+        var encodedInt = encoder.Encode(_values, s => encodedValuesLog += s);
         logString += $" = {encodedInt} => {encodedValuesLog} = {encodedInt}";
 
         // Line Break
@@ -59,7 +61,9 @@ public class GodelEncodeTesting : MonoBehaviour {
         // Decoding
         string decodedValuesLog = "";
         logString += $"GodelDecoding({encodedInt})";
-        var decodedValues = IntGodelEncoding.DecodeInt(encodedInt, s => decodedValuesLog += s);
+        
+        
+        var decodedValues = encoder.Decode(encodedInt, s => decodedValuesLog += s);
         logString += $" = ({decodedValues.ToCommaDelimitedString().Replace(".", "")}) ";
         logString += $" => ";
 
