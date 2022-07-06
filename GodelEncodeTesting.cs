@@ -5,42 +5,11 @@ using PI.Math.GodelEncoding;
 using TMPro;
 using UnityEngine;
 
-public enum Alphabet {
-    A,
-    B,
-    C,
-    D,
-    E,
-    F,
-    G,
-    H,
-    I,
-    J,
-    K,
-    L,
-    M,
-    N,
-    O,
-    P,
-    Q,
-    R,
-    S,
-    T,
-    U,
-    V,
-    W,
-    X,
-    Y,
-    Z
-}
-
 public class GodelEncodeTesting : MonoBehaviour {
     [SerializeField] List<int> _values = new() {1, 2, 3};
 
     [SerializeField]
     private int _primeFactorizationTest = 2 * 3 * 5;
-
-    private Alphabet _alphabet;
 
     private void EnsureInit() {
         if (_values == null) {
@@ -55,7 +24,7 @@ public class GodelEncodeTesting : MonoBehaviour {
 
     [Button]
     private void TestEncodeInts() {
-        IntGodelEncoding.EncodeValues(_alphabet, _values, out string logString);
+        IntGodelEncoding.EncodeValues(_values, out string logString);
         Debug.Log(logString);
     }
 
@@ -77,7 +46,7 @@ public class GodelEncodeTesting : MonoBehaviour {
         // Encoding
         string logString = $"GodelEncoding({_values.ToCommaDelimitedString().Replace(".", "")}) ";
 
-        var encodedInt = IntGodelEncoding.EncodeValues(_alphabet, _values, out string encodedValuesLog);
+        var encodedInt = IntGodelEncoding.EncodeValues(_values, out string encodedValuesLog);
         logString += $" = {encodedInt} => {encodedValuesLog} = {encodedInt}";
 
         // Line Break
@@ -89,7 +58,7 @@ public class GodelEncodeTesting : MonoBehaviour {
         logString += $" = ({decodedValues.ToCommaDelimitedString().Replace(".", "")}) ";
         logString += $" => ";
 
-        
+
         // Operator
         string x = "g";
         logString += $"({PureMethods.GetPrimeFactorsOf(encodedInt, out string _).ToCommaDelimitedString().Replace(".", "")})";

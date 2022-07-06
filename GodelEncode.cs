@@ -9,7 +9,7 @@ using UnityEngine.Windows;
 
 namespace PI.Math.GodelEncoding {
     public abstract class GodelEncoding<T> {
-        public abstract int Encode(Enum alphabet, List<T> values);
+        public abstract int Encode(List<T> values);
     }
 
     public class Wrapped<T> {
@@ -28,18 +28,17 @@ namespace PI.Math.GodelEncoding {
         /// <summary>
         /// Encodes <paramref name="values"/> using 
         /// </summary>
-        /// <param name="alphabet">Alphabet to "use" ToDo: Make method without it, it's unnecessary</param>
-        /// <param name="values">Values to encode using alphabet</param>
+        /// <param name="values">Values to encode </param>
         /// <remarks>Godel Encoding: https://www.wikiwand.com/en/G%C3%B6del_numbering#/G%C3%B6del's_encoding</remarks>
         /// <returns></returns>
-        public static int EncodeValues(Enum alphabet, List<int> values) {
+        public static int EncodeValues(List<int> values) {
             IntGodelEncoding encoder = new IntGodelEncoding();
-            return encoder.Encode(alphabet, values);
+            return encoder.Encode(values);
         }
 
-        public static int EncodeValues(Enum alphabet, List<int> values, out string log) {
+        public static int EncodeValues(List<int> values, out string log) {
             IntGodelEncoding encoder = new IntGodelEncoding();
-            return encoder.Encode(alphabet, values, out log);
+            return encoder.Encode(values, out log);
         }
 
         public static List<int> DecodeInt(int n, out string log) {
@@ -62,7 +61,7 @@ namespace PI.Math.GodelEncoding {
             return values;
         }
 
-        public override int Encode(Enum alphabet, List<int> values) {
+        public override int Encode(List<int> values) {
             double returnValue = 1;
             int count = values.Count;
 
@@ -74,7 +73,7 @@ namespace PI.Math.GodelEncoding {
             return (int)returnValue;
         }
 
-        private int Encode(Enum alphabet, List<int> values, out string log) {
+        private int Encode(List<int> values, out string log) {
             double returnValue = 1;
 
             int count = values.Count;
